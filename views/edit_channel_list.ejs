@@ -53,6 +53,76 @@
     .navbar-link {
       text-decoration: none;
     }
+
+    .channels {
+      display: flex;
+      background-color: #333;
+      border-radius: 5px;
+      margin-top: 10px;
+      align-items: center;
+    }
+
+    .channels-div-title {
+      white-space: nowrap;
+      color: #E1DEDB;
+      padding: 5px;
+      margin: 5px;
+    }
+
+    .channels-div-content {
+      display: flex;
+      flex-wrap: wrap;
+    }
+
+    .channel {
+      position: relative;
+    }
+
+    .channel-name {
+      width: fit-content;
+      background-color: #212325;
+      color: #E1DEDB;
+      padding-top: 5px;
+      padding-bottom: 5px;
+      padding-left: 10px;
+      padding-right: 10px;
+      border-radius: 5px;
+      margin: 5px;
+    }
+
+    .channel-remove-button {
+      background-color: red;
+      border: 0px;
+      border-radius: 100%;
+      position: absolute;
+      top: 0px;
+      right: 0px;
+      padding: 0px;
+      height: 12px;
+      width: 12px;
+    }
+
+    .channel-remove-button:hover {
+      cursor: pointer;
+    }
+
+    #add-channel-name {
+      background-color: #212325;
+      color: #E1DEDB;
+      border: 0px;
+      border-radius: 5px;
+      padding: 5px;
+    }
+
+    #add-channel-button {
+      background-color: rgb(1, 208, 104);
+      border: 0px;
+      border-radius: 5px;
+      color: #000;
+      padding: 5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
   </style>
 </head>
 
@@ -65,10 +135,148 @@
     </div>
     <ul class="navbar-menu">
       <li class="navbar-item">
-        <a href="/edit_channel_list" class="navbar-link" style="background-color: #212325; padding: 5px; border-radius: 5px;">Edit Channel List</a>
+        <a href="/edit_channel_list" class="navbar-link"
+          style="background-color: #212325; padding: 5px; border-radius: 5px;">
+          Edit Channel List
+        </a>
       </li>
     </ul>
   </nav>
+  <div class="channels">
+    <div class="channels-div-title">
+      <p>List of Channels : </p>
+    </div>
+    <div class="channels-div-content" id="channels">
+      <% channels.forEach(channel=> { %>
+        <div class="channel" id="channel-<%= channel.name %>">
+          <div class="channel-name">
+            <%= channel.name %>
+          </div>
+          <button class="channel-remove-button" onclick="removeChannel('<%= channel.name %>')"></button>
+        </div>
+        <% }); %>
+    </div>
+  </div>
+  <div class="channels" id="removed-channels-parent">
+    <div class="channels-div-title">
+      <p>Removed Channels : </p>
+    </div>
+    <div class="channels-div-content" id="removed-channels"></div>
+  </div>
+  <div class="channels" id="add-channels">
+    <div class="channels-div-title">
+      <p>Add Channels : </p>
+    </div>
+    <form>
+      <input type="text" name="channelName" id="add-channel-name" placeholder="Enter Channel Username">
+      <button id="add-channel-button" type="submit" onclick="addChannel()">Add Channel</button>
+    </form>
+  </div>
 </body>
+<script>
+  document.getElementById('removed-channels-parent').style.display = 'none';
+  removeChannel = (channelName) => {
+    console.log("Removing ", channelName);
+    channelToRemove = document.getElementById(`channel-${channelName}`);
+    document.getElementById('channels').removeChild(channelToRemove);
+
+    channelToRemove.children[1].style.backgroundColor = 'green';
+    channelToRemove.children[1].onclick = () => {
+      restoreChannel(channelName);
+    }
+    document.getElementById('removed-channels').appendChild(channelToRemove);
+    document.getElementById('removed-channels-parent').style.display = 'flex';
+
+    var data = JSON.stringify({
+      channel_name: channelName
+    });
+
+    fetch('/remove_channel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: data
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Channel removed:', data);
+      })
+      .catch(error => {
+        console.error('Error removing channel:', error);
+      });
+  }
+  restoreChannel = (channelName) => {
+    console.log("Restoring ", channelName);
+    channelToAdd = document.getElementById(`channel-${channelName}`);
+    document.getElementById('removed-channels').removeChild(channelToAdd);
+
+    channelToAdd.children[1].style.backgroundColor = 'red';
+    channelToAdd.children[1].onclick = () => {
+      removeChannel(channelName);
+    }
+    document.getElementById('channels').appendChild(channelToAdd);
+    if (document.getElementById('removed-channels').children.length == 0) {
+      document.getElementById('removed-channels-parent').style.display = 'none';
+    }
+
+    var data = JSON.stringify({
+      channel_name: channelName
+    });
+
+    fetch('/add_channel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: data
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Channel added:', data);
+      })
+      .catch(error => {
+        console.error('Error adding channel:', error);
+      });
+  }
+  addChannel = () => {
+    channelName = document.getElementById('add-channel-name').value;
+    document.getElementById('add-channel-name').value = '';
+    if (channelName == '') {
+      alert('Please enter a valid channel username');
+      return;
+    }
+    console.log("Adding ", channelName);
+    channelToAdd = document.createElement('div');
+    channelToAdd.className = 'channel';
+    channelToAdd.id = `channel-${channelName}`;
+    channelToAdd.innerHTML = `
+      <div class="channel-name">
+        ${channelName}
+      </div>
+      <button class="channel-remove-button" onclick="removeChannel('${channelName}')"></button>
+    `;
+    document.getElementById('channels').appendChild(channelToAdd);
+
+    var data = JSON.stringify({
+      channel_name: channelName
+    });
+
+    fetch('/add_channel', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: data
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Channel added:', data);
+      })
+      .catch(error => {
+        console.error('Error adding channel:', error);
+      });
+  }
+</script>
 
 </html>
