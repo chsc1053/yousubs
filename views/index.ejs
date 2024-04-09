@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>YouSubs Home</title>
+
+  <style>
+    div::-webkit-scrollbar {
+      width: 20px;
+      height: 10px;
+    }
+
+    div::-webkit-scrollbar-track {
+      background-color: #303336;
+      border-radius: 100px;
+    }
+
+    div::-webkit-scrollbar-thumb {
+      border-radius: 100px;
+      background-color: #E1DEDB;
+    }
+
+    a:link {
+      text-decoration: none;
+      color: #E1DEDB;
+    }
+
+    a:visited {
+      text-decoration: none;
+      color: #E1DEDB;
+    }
+
+    a:hover {
+      color: #fff;
+    }
+
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #333;
+      border-radius: 5px;
+      padding: 10px 20px;
+    }
+
+    .navbar-logo {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-title {
+      color: #fff;
+      font-size: 24px;
+      text-decoration: none;
+    }
+
+    .navbar-menu {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      margin: 0;
+      padding: 0;
+    }
+
+    .navbar-item {
+      margin-left: 20px;
+    }
+
+    .navbar-link {
+      text-decoration: none;
+    }
+  </style>
+</head>
+
+<body style="background-color: #212325; color: #E1DEDB;">
+  <nav class="navbar">
+    <div class="navbar-logo">
+      <a class="navbar-logo-image" href="/">
+        <img src="/icon.png" alt="icon" style="width:30px; border-radius: 100%;">
+      </a>
+    </div>
+    <ul class="navbar-menu">
+      <li class="navbar-item">
+        <a href="/edit_channel_list" class="navbar-link" style="background-color: #212325; padding: 5px; border-radius: 5px;">Edit Channel List</a>
+      </li>
+    </ul>
+  </nav>
+  <div class="channels">
+    <% channels.forEach(channel=> { %>
+      <div class="channel">
+        <div class="channel-title">
+          <h4 style="width: fit-content;">
+            <a target="_blank" href="https://youtube.com/channel/<%= channel.id %>">
+              <%= channel.name %>
+            </a>
+          </h4>
+        </div>
+        <div class="channel-videos" style="display: flex; flex-direction: row; overflow-y: hidden;">
+          <% channel.videos.forEach(video=> { %>
+            <div class="video" style="padding: 15px;">
+              <a target="_blank" href="https://www.youtube.com/watch?v=<%= video.id %>">
+                <div class="thumbnail" style="position: relative; margin-bottom: -15px;">
+                  <img src="<%= video.thumbnail_url %>" alt="<%= video.title %>"
+                    style="border-radius: 5px; width: 250px;">
+                  <p
+                    style="position: absolute; bottom: -6px; right: 5px; background-color: black; color: white; border-radius: 5px; padding: 2px; font-size: smaller;">
+                    <%= video.length %>
+                  </p>
+                </div>
+              </a>
+              <div class="video-details">
+                <a target="_blank" href="https://www.youtube.com/watch?v=<%= video.id %>"
+                  style="text-decoration: none;">
+                  <div class="video-details-title" style="margin-bottom: -15px;">
+                    <h5>
+                      <%= video.title %>
+                    </h5>
+                  </div>
+                </a>
+                <div class="video-details-info"
+                  style="font-size: smaller; text-align: right; margin-top: -15px; margin-bottom: -15px;">
+                  <p>
+                    <%= video.published_time %>
+                  </p>
+                </div>
+              </div>
+            </div>
+            <% }); %>
+        </div>
+      </div>
+      <% }); %>
+  </div>
+</body>
+
+</html>
