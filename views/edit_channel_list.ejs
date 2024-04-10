@@ -22,7 +22,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background-color: #333;
+      background-color: #3d3d3d;
       border-radius: 5px;
       padding: 10px 20px;
     }
@@ -133,14 +133,6 @@
         <img src="/icon.png" alt="icon" style="width:30px; border-radius: 100%;">
       </a>
     </div>
-    <ul class="navbar-menu">
-      <li class="navbar-item">
-        <a href="/edit_channel_list" class="navbar-link"
-          style="background-color: #212325; padding: 5px; border-radius: 5px;">
-          Edit Channel List
-        </a>
-      </li>
-    </ul>
   </nav>
   <div class="channels">
     <div class="channels-div-title">
@@ -167,11 +159,24 @@
     <div class="channels-div-title">
       <p>Add Channels : </p>
     </div>
-    <form>
-      <input type="text" name="channelName" id="add-channel-name" placeholder="Enter Channel Username">
-      <button id="add-channel-button" type="submit" onclick="addChannel()">Add Channel</button>
-    </form>
+    <input type="text" name="channelName" id="add-channel-name" placeholder="Enter Channel Username">
+    <button id="add-channel-button" type="submit" onclick="addChannel()">Add Channel</button>
   </div>
+  <div class="channels">
+    <div class="channels-div-title">
+      <p>Instructions : </p>
+    </div>
+    <div>
+      <p>1. To remove a channel, click on the red button ( <button class="channel-remove-button"
+          style="position: relative; cursor: default;"></button> ) next to the channel name.</p>
+      <p>2. To restore a removed channel, click on the green button ( <button class="channel-remove-button"
+          style="position: relative; background-color: green; cursor: default;"></button> ) next to the channel name.
+      </p>
+      <p>3. Channels listed under "Removed Channels" are available for easy restoration. These channels will disappear
+        from the list upon refreshing the page.</p>
+      <p>4. To add a channel, enter the channel username in the text box and hit Enter or click on the "Add Channel"
+        button.</p>
+    </div>
 </body>
 <script>
   document.getElementById('removed-channels-parent').style.display = 'none';
