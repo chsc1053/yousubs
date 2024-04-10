@@ -103,7 +103,7 @@ async function get_channel_id(channel_name) {
 async function get_channel_ids_and_store(channels) {
   channel_list_updated = false;
   for await (const channel of channels) {
-    if (channel.id === "") {
+    if (!channel.id) {
       try {
         await new Promise((resolve) => setTimeout(resolve, 1001)); // Delay for 1 second
         const get_channel_id_response = await get_channel_id(channel.name);
@@ -231,6 +231,9 @@ async function get_complete_video_data() {
   channels = await get_channel_list();
   await get_channel_ids_and_store(channels);
   await get_channel_videos_and_store(channels);
+  await console.log(
+    "\nget_complete_video_data(): Fetching data completed ⭐.\n"
+  );
   // console.log("get_complete_video_data(): channels:\n", channels);
 }
 
